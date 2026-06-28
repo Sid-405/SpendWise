@@ -1,6 +1,6 @@
 {
-  "name": "My Money — Finance Tracker",
-  "short_name": "My Money",
+  "name": "SpendWise",
+  "short_name": "SpendWise",
   "description": "Personal finance tracker powered by Google Sheets",
   "start_url": "index.html",
   "scope": "./",
