@@ -3,7 +3,7 @@
   ╔══════════════════════════════════════════════════════════════════╗
   ║  MY MONEY — PWA SHELL                                           ║
   ║  This file lives on GitHub Pages. It is NOT the app.           ║
-  ║  The real app UI lives in Apps Script → Index.html (capital I) ║
+  ║  The real app UI lives in Apps Script → Dashboard.html          ║
   ║                                                                  ║
   ║  HOW IT WORKS:                                                   ║
   ║  1. Browser loads this shell → SW registers → manifest linked   ║
@@ -21,9 +21,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="My Money">
-  <meta name="theme-color" content="#0b0e14">
-  <title>My Money</title>
+  <meta name="apple-mobile-web-app-title" content="Money Manager">
+  <meta name="theme-color" content="#000000">
+  <title>Money Manager</title>
 
   <!-- PWA manifest — must stay here so Chrome detects it before document.write() -->
   <link rel="manifest" href="./manifest.json">
@@ -31,32 +31,51 @@
 
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
-    html,body{height:100%;background:#0b0e14;color:#eef1f7;
+    html,body{
+      height:100%;
+      background:#000000;
+      color:#f7f7f8;
       font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-      display:flex;align-items:center;justify-content:center;}
-    #boot{display:flex;flex-direction:column;align-items:center;gap:20px;padding:32px;text-align:center;}
-    .logo{width:72px;height:72px;border-radius:22px;
-      background:linear-gradient(135deg,#7c5cff,#22d3ee);
-      display:flex;align-items:center;justify-content:center;font-size:36px;
-      box-shadow:0 12px 40px rgba(124,92,255,.5);
-      animation:pop .5s cubic-bezier(.2,.8,.2,1);}
+      display:flex;align-items:center;justify-content:center;
+    }
+    #boot{
+      display:flex;flex-direction:column;align-items:center;
+      gap:20px;padding:32px;text-align:center;
+    }
+    .logo{
+      width:72px;height:72px;border-radius:22px;
+      background:#000;
+      overflow:hidden;
+      box-shadow:0 12px 40px rgba(0,0,0,.6);
+      animation:pop .5s cubic-bezier(.2,.8,.2,1);
+    }
+    .logo img{width:72px;height:72px;display:block;}
     @keyframes pop{from{transform:scale(.7);opacity:0;}to{transform:scale(1);opacity:1;}}
-    .ring{width:32px;height:32px;border-radius:50%;
-      border:3px solid rgba(255,255,255,.12);border-top-color:#7c5cff;
-      animation:spin .75s linear infinite;}
+    .ring{
+      width:32px;height:32px;border-radius:50%;
+      border:3px solid rgba(255,255,255,.12);
+      border-top-color:#ffffff;
+      animation:spin .75s linear infinite;
+    }
     @keyframes spin{to{transform:rotate(360deg);}}
-    .msg{font-size:13px;color:#9aa3b2;font-weight:500;max-width:240px;line-height:1.5;}
-    .retry{color:#22d3ee;font-size:13px;font-weight:600;text-decoration:none;
-      padding:10px 20px;border-radius:11px;border:1px solid rgba(34,211,238,.35);
-      background:rgba(34,211,238,.08);display:none;}
+    .msg{
+      font-size:13px;color:#a0a0a8;font-weight:500;
+      max-width:240px;line-height:1.5;
+    }
+    .retry{
+      color:#ffffff;font-size:13px;font-weight:600;
+      text-decoration:none;padding:10px 20px;border-radius:11px;
+      border:1px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.08);display:none;
+    }
     .retry:active{opacity:.7;}
   </style>
 </head>
 <body>
   <div id="boot">
-    <div class="logo">💎</div>
+    <div class="logo"><img src="./icon-512.png" alt="Money Manager"></div>
     <div class="ring" id="ring"></div>
-    <p class="msg" id="msg">Loading your finances…</p>
+    <p class="msg" id="msg">Loading your money…</p>
     <a class="retry" id="retry" href="javascript:location.reload()">Tap to retry</a>
   </div>
 
@@ -70,7 +89,6 @@
       navigator.serviceWorker.register('./sw.js', { scope: './' })
         .then(function(reg) {
           SW_READY = true;
-          // If a waiting SW exists, activate it now
           if (reg.waiting) { reg.waiting.postMessage({ type: 'SKIP_WAITING' }); }
           reg.addEventListener('updatefound', function() {
             var nw = reg.installing;
@@ -81,7 +99,7 @@
             });
           });
         })
-        .catch(function() { SW_READY = true; }); // continue even if SW fails
+        .catch(function() { SW_READY = true; });
     } else {
       SW_READY = true;
     }
@@ -101,8 +119,6 @@
         })
         .then(function(html) {
           if (!html || html.trim().length < 100) throw new Error('empty');
-          // Hand off to the full app. URL stays as the GitHub Pages URL,
-          // so manifest.json, sw.js and icons all still resolve correctly.
           document.open('text/html', 'replace');
           document.write(html);
           document.close();
@@ -115,8 +131,6 @@
         });
     }
 
-    // Small delay lets the SW registration kick off first, improving
-    // the chance Chrome fires beforeinstallprompt on this very visit.
     setTimeout(loadApp, 80);
   </script>
 </body>
