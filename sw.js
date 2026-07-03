@@ -18,6 +18,7 @@ function mmToday(){
   return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
 }
 async function mmCheckBills(){
+  if (self.Notification && Notification.permission !== 'granted') return;
   const data = await mmReadJSON('/recurring-data');
   if (!data || !data.rows) return;
   const today = mmToday();
